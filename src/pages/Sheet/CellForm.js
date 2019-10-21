@@ -239,6 +239,7 @@ class CellForm extends React.Component {
     return (
       <Card>
         <Form labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>
+          {this.props.id && <Form.Item>正在编辑 {this.props.id}</Form.Item>}
           <Form.Item label="value">
             {getFieldDecorator("value", {})(<Input disabled={readOnly} />)}
           </Form.Item>
@@ -263,6 +264,7 @@ class CellForm extends React.Component {
             })(<SketchPicker />)}
           </Form.Item> */}
         </Form>
+        {/* <Button></Button> */}
       </Card>
     );
   }

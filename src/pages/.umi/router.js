@@ -46,12 +46,14 @@ const routes = [
             path: "/SheetTemplate",
             name: "SheetTemplate",
             component: require("../Template").default,
+            hideInMenu: true,
             exact: true
           },
           {
             path: "/SheetDocument",
             name: "SheetDocument",
             component: require("../Document").default,
+            hideInMenu: true,
             exact: true
           },
           {

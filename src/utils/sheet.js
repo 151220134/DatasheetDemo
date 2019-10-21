@@ -27,7 +27,7 @@ export const array2Object = grid => {
   grid.forEach(row =>
     row.forEach(col => {
       const { key, value } = col;
-      obj[key] = isNaN(col.value) ? 0 : parseFloat(col.value);
+      obj[key] = isNaN(value) ? 0 : parseFloat(value);
     })
   );
   return obj;

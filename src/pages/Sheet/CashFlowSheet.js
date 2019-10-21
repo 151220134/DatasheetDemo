@@ -18,47 +18,43 @@ import ReactDataSheet from "react-datasheet";
 import "react-datasheet/lib/react-datasheet.css";
 import _ from "lodash";
 import * as mathjs from "mathjs";
-import {
-  generatKey,
-  findCellByKey,
-  array2Object,
-  type2Component
-} from "@/utils/sheet.js";
+import { generatKey, findCellByKey, array2Object } from "@/utils/sheet.js";
 import CellForm from "./CellForm.js";
 import { mapping } from "./DataEditor.js";
+import { connect } from "dva";
+const mapStateToProps = state => ({
+  grid: state["sheet"]
+});
 
-// 报表基本信息
+// 现金流量表
 class CashFlowSheet extends React.Component {
   state = {
-    grid: generatKey([
-      [
-        { value: "客户名称", expr: null, readOnly: true },
-        { value: "XX有限责任公司", expr: null, readOnly: true },
-        { value: "客户编号", expr: null, readOnly: true },
-        { value: "ZL00000004", expr: null, readOnly: true }
-      ],
-      [
-        { value: "是否审计", expr: null, readOnly: true },
-        { value: "否", expr: null, type: { type: "boolean" } },
-        { value: "审计日期", expr: null, readOnly: true },
-        { value: "2019-10-15", expr: null }
-      ],
-      [
-        { value: "审计意见", expr: null, readOnly: true },
-        { value: null, expr: null },
-        { value: "审计报告编号", expr: null, readOnly: true },
-        {
-          value: null,
-          expr: null,
-          type: {
-            type: "string",
-            enum: JSON.stringify(["1001", "1002"])
-          }
-        }
-      ]
-    ]),
+    grid: this.props.grid.CashFlowSheet,
     selected: null
   };
+
+  componentDidMount() {
+    const grid = this.state.grid.map(row => [...row]);
+    // 检查expr并更新value
+    grid.forEach((row, i) =>
+      row.forEach((col, j) => {
+        const cell = grid[i][j];
+        if (cell.expr) this.updateCell(grid, i, j, cell);
+      })
+    );
+    this.setState({ grid });
+  }
+
+  // componentDidUpdate() {
+  //   const grid = this.state.grid.map(row => [...row]);
+  //   // 检查expr并更新value
+  //   grid.forEach((row, i) => row.forEach((col, j) => {
+  //     const cell = grid[i][j]
+  //     if(cell.expr)
+  //     this.updateCell(grid, i, j, cell)
+  //   }))
+  //   this.setState({ grid });
+  // }
 
   validateExp(trailKeys, expr, state) {
     let valid = true;
@@ -80,20 +76,28 @@ class CashFlowSheet extends React.Component {
   computeExpr(changeCell, scope, state) {
     const { key, expr } = changeCell;
     let value = null;
-    if (expr.charAt(0) !== "=") {
-      return { ...changeCell, className: "", value: expr, expr: expr };
-    } else {
-      try {
-        value = mathjs.evaluate(expr.substring(1), scope);
-      } catch (e) {
-        value = null;
-      }
-      if (value !== null && this.validateExp([key], expr, state)) {
-        return { ...changeCell, className: "equation", value, expr };
-      } else {
-        return { ...changeCell, className: "error", value: "error", expr: "" };
-      }
+    // if (expr.charAt(0) !== "=") {
+    //   return { ...changeCell, className: "", value: expr, expr: expr };
+    // } else {
+    try {
+      value = mathjs.evaluate(expr.substring(1), scope);
+    } catch (e) {
+      value = null;
     }
+    if (
+      value &&
+      typeof value !== "object" /*&& this.validateExp([key], expr, state)*/
+    ) {
+      return {
+        ...changeCell,
+        className: "equation",
+        value: Number(value.toFixed(2)),
+        expr
+      };
+    } else {
+      return { ...changeCell, className: "error", value: "error", expr }; //{ ...changeCell, className: "error", value: "error", expr: "" };
+    }
+    // }
   }
 
   cellUpdate(state, changeCell, expr) {
@@ -118,25 +122,33 @@ class CashFlowSheet extends React.Component {
     return state;
   }
 
-  updateCell = (grid, row, col) => {
-    if (value.charAt(0) !== "=") return grid;
-    const scope = array2Object(grid);
-    const changeCell = grid[row][col];
-    grid[row][col] = this.computeExpr(changeCell, scope, grid); //_.assign({}, changeCell, this.computeExpr(changeCell, expr, scope, state))
+  updateCell = (grid, row, col, cell) => {
+    const { expr } = cell;
+    if (!expr || expr.charAt(0) !== "=") return grid;
 
-    grid.forEach((row, index) =>
-      row.forEach((cell, key) => {
-        if (
-          cell.expr &&
-          cell.expr.charAt(0) === "=" &&
-          cell.expr.indexOf(changeCell.key) > -1 &&
-          key !== changeCell.key
-        ) {
-          state = this.cellUpdate(state, index, key);
-        }
-      })
-    );
-    return state;
+    const _grid = this.props.grid;
+    const BIS = array2Object(_grid.BasicInfoSheet);
+    const BS = array2Object(_grid.BalanceSheet);
+    const IS = array2Object(_grid.IncomeSheet);
+    const CFS = array2Object(grid);
+    const scope = { BIS, BS, IS, CFS }; //array2Object(grid);
+    debugger;
+    // const changeCell = grid[row][col];
+    grid[row][col] = this.computeExpr(cell, scope, grid); //_.assign({}, changeCell, this.computeExpr(changeCell, expr, scope, state))
+    // debugger
+    // grid.forEach((row, index) =>
+    //   row.forEach((col, key) => {
+    //     if (
+    //       col.expr &&
+    //       col.expr.charAt(0) === "=" &&
+    //       col.expr.indexOf(cell.key) > -1 &&
+    //       key !== cell.key
+    //     ) {
+    //       grid = this.updateCell(grid, index, key);
+    //     }
+    //   })
+    // );
+    return grid;
   };
 
   handleFormChange = values => {
@@ -144,7 +156,7 @@ class CashFlowSheet extends React.Component {
     const grid = this.state.grid.map(row => [...row]);
     grid[i][j] = { ...grid[i][j], ...values };
     // 检查expr并更新value
-    // this.updateCell(grid, i, j)
+    this.updateCell(grid, i, j, grid[i][j]);
     this.setState({ grid });
   };
 
@@ -155,8 +167,19 @@ class CashFlowSheet extends React.Component {
 
     return (
       <Card>
+        <p>表格标识： CFS</p>
+        <Button
+          onClick={() =>
+            this.props.dispatch({
+              type: "sheet/updateSheet",
+              payload: { CashFlowSheet: this.state.grid }
+            })
+          }
+        >
+          保存
+        </Button>
         <Row>
-          <Col span={18}>
+          <Col span={16}>
             <ReactDataSheet
               key="CashFlowSheet"
               data={this.state.grid} // array
@@ -169,14 +192,16 @@ class CashFlowSheet extends React.Component {
               }} // visible in edit mode
               onCellsChanged={changes => {
                 // callback
+                console.log(changes);
                 const grid = this.state.grid.map(row => [...row]);
                 changes.forEach(({ cell, row, col, value }) => {
-                  if (typeof value !== "string")
+                  if (typeof value !== "string") {
                     grid[row][col] = { ...grid[row][col], value };
-                  else {
+                  } else {
+                    // changes中的value不分value和expr
                     grid[row][col] = { ...grid[row][col], value, expr: value };
                     // 检查expr并更新value
-                    // this.updateCell(grid, row, col)
+                    this.updateCell(grid, row, col, grid[row][col]);
                   }
                 });
                 this.setState({ grid });
@@ -199,8 +224,14 @@ class CashFlowSheet extends React.Component {
               onSelect={selected => this.setState({ selected })}
             />
           </Col>
-          <Col span={6}>
-            {field && <CellForm {...field} onChange={this.handleFormChange} />}
+          <Col span={8}>
+            {field && (
+              <CellForm
+                {...field}
+                id={field.key}
+                onChange={this.handleFormChange}
+              />
+            )}
           </Col>
         </Row>
       </Card>
@@ -208,4 +239,4 @@ class CashFlowSheet extends React.Component {
   }
 }
 
-export default CashFlowSheet;
+export default connect(mapStateToProps)(CashFlowSheet);

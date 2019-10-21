@@ -113,12 +113,14 @@ export default {
             {
               path: "/SheetTemplate",
               name: "SheetTemplate",
-              component: "./Template"
+              component: "./Template",
+              hideInMenu: true
             },
             {
               path: "/SheetDocument",
               name: "SheetDocument",
-              component: "./Document"
+              component: "./Document",
+              hideInMenu: true
             },
             {
               path: "/welcome",
