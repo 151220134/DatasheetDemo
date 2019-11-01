@@ -1,112 +1,112 @@
-import React from "react";
-import { Router as DefaultRouter, Route, Switch } from "react-router-dom";
-import dynamic from "umi/dynamic";
-import renderRoutes from "umi/lib/renderRoutes";
-import history from "@tmp/history";
-import RendererWrapper0 from "/Users/Penelope/DatasheetDemo/src/pages/.umi/LocaleWrapper.jsx";
+import React from 'react';
+import { Router as DefaultRouter, Route, Switch } from 'react-router-dom';
+import dynamic from 'umi/dynamic';
+import renderRoutes from 'umi/lib/renderRoutes';
+import history from '@tmp/history';
+import RendererWrapper0 from '/Users/Penelope/DatasheetDemo/src/pages/.umi/LocaleWrapper.jsx';
 
-const Router = require("dva/router").routerRedux.ConnectedRouter;
+const Router = require('dva/router').routerRedux.ConnectedRouter;
 
 const routes = [
   {
-    path: "/user",
-    component: require("../../layouts/UserLayout").default,
+    path: '/user',
+    component: require('../../layouts/UserLayout').default,
     routes: [
       {
-        name: "login",
-        path: "/user/login",
-        component: require("../user/login").default,
-        exact: true
+        name: 'login',
+        path: '/user/login',
+        component: require('../user/login').default,
+        exact: true,
       },
       {
         component: () =>
           React.createElement(
-            require("/Users/Penelope/DatasheetDemo/node_modules/_umi-build-dev@1.13.10@umi-build-dev/lib/plugins/404/NotFound.js")
+            require('/Users/Penelope/DatasheetDemo/node_modules/_umi-build-dev@1.13.10@umi-build-dev/lib/plugins/404/NotFound.js')
               .default,
-            { pagesPath: "src/pages", hasRoutesInConfig: true }
-          )
-      }
-    ]
+            { pagesPath: 'src/pages', hasRoutesInConfig: true },
+          ),
+      },
+    ],
   },
   {
-    path: "/",
-    component: require("../../layouts/SecurityLayout").default,
+    path: '/',
+    component: require('../../layouts/SecurityLayout').default,
     routes: [
       {
-        path: "/",
-        component: require("../../layouts/BasicLayout").default,
-        authority: ["admin", "user"],
+        path: '/',
+        component: require('../../layouts/BasicLayout').default,
+        authority: ['admin', 'user'],
         routes: [
           {
-            path: "/",
-            component: require("../Sheet").default,
-            exact: true
+            path: '/',
+            component: require('../Sheet').default,
+            exact: true,
           },
           {
-            path: "/SheetTemplate",
-            name: "SheetTemplate",
-            component: require("../Template").default,
+            path: '/SheetTemplate',
+            name: 'SheetTemplate',
+            component: require('../Template').default,
             hideInMenu: true,
-            exact: true
+            exact: true,
           },
           {
-            path: "/SheetDocument",
-            name: "SheetDocument",
-            component: require("../Document").default,
+            path: '/SheetDocument',
+            name: 'SheetDocument',
+            component: require('../Document').default,
             hideInMenu: true,
-            exact: true
+            exact: true,
           },
           {
-            path: "/welcome",
-            name: "welcome",
-            icon: "smile",
-            component: require("..").default,
-            exact: true
+            path: '/welcome',
+            name: 'welcome',
+            icon: 'smile',
+            component: require('..').default,
+            exact: true,
           },
           {
-            component: require("../404").default,
-            exact: true
+            component: require('../404').default,
+            exact: true,
           },
           {
             component: () =>
               React.createElement(
-                require("/Users/Penelope/DatasheetDemo/node_modules/_umi-build-dev@1.13.10@umi-build-dev/lib/plugins/404/NotFound.js")
+                require('/Users/Penelope/DatasheetDemo/node_modules/_umi-build-dev@1.13.10@umi-build-dev/lib/plugins/404/NotFound.js')
                   .default,
-                { pagesPath: "src/pages", hasRoutesInConfig: true }
-              )
-          }
-        ]
+                { pagesPath: 'src/pages', hasRoutesInConfig: true },
+              ),
+          },
+        ],
       },
       {
-        component: require("../404").default,
-        exact: true
+        component: require('../404').default,
+        exact: true,
       },
       {
         component: () =>
           React.createElement(
-            require("/Users/Penelope/DatasheetDemo/node_modules/_umi-build-dev@1.13.10@umi-build-dev/lib/plugins/404/NotFound.js")
+            require('/Users/Penelope/DatasheetDemo/node_modules/_umi-build-dev@1.13.10@umi-build-dev/lib/plugins/404/NotFound.js')
               .default,
-            { pagesPath: "src/pages", hasRoutesInConfig: true }
-          )
-      }
-    ]
+            { pagesPath: 'src/pages', hasRoutesInConfig: true },
+          ),
+      },
+    ],
   },
   {
-    component: require("../404").default,
-    exact: true
+    component: require('../404').default,
+    exact: true,
   },
   {
     component: () =>
       React.createElement(
-        require("/Users/Penelope/DatasheetDemo/node_modules/_umi-build-dev@1.13.10@umi-build-dev/lib/plugins/404/NotFound.js")
+        require('/Users/Penelope/DatasheetDemo/node_modules/_umi-build-dev@1.13.10@umi-build-dev/lib/plugins/404/NotFound.js')
           .default,
-        { pagesPath: "src/pages", hasRoutesInConfig: true }
-      )
-  }
+        { pagesPath: 'src/pages', hasRoutesInConfig: true },
+      ),
+  },
 ];
 window.g_routes = routes;
-const plugins = require("umi/_runtimePlugin");
-plugins.applyForEach("patchRoutes", { initialValue: routes });
+const plugins = require('umi/_runtimePlugin');
+plugins.applyForEach('patchRoutes', { initialValue: routes });
 
 export { routes };
 
@@ -118,12 +118,12 @@ export default class RouterWrapper extends React.Component {
 
     // route change handler
     function routeChangeHandler(location, action) {
-      plugins.applyForEach("onRouteChange", {
+      plugins.applyForEach('onRouteChange', {
         initialValue: {
           routes,
           location,
-          action
-        }
+          action,
+        },
       });
     }
     this.unListen = history.listen(routeChangeHandler);

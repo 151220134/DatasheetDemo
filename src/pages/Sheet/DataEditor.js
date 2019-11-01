@@ -26,39 +26,6 @@ export const mapping = type =>
 export class BooleanEditor extends React.Component {
   render() {
     const { cell, value, onChange } = this.props;
-    // return new Map([
-    //   [
-    //     "中文",
-    //     <Select
-    //       style={{ width: "100%" }}
-    //       value={value}
-    //       onChange={newValue => onChange(newValue)}
-    //       getPopupContainer={triggerNode => triggerNode.parentNode}
-    //     >
-    //       <Select.Option key="是" value="是">
-    //         是
-    //       </Select.Option>
-    //       <Select.Option key="否" value="否">
-    //         否
-    //       </Select.Option>
-    //     </Select>
-    //   ],
-    //   [
-    //     "English",
-    //     <Select
-    //       value={value}
-    //       onChange={newValue => onChange(newValue)}
-    //       getPopupContainer={triggerNode => triggerNode.parentNode}
-    //     >
-    //       <Select.Option key="Yes" value="Yes">
-    //         Yes
-    //       </Select.Option>
-    //       <Select.Option key="No" value="No">
-    //         No
-    //       </Select.Option>
-    //     </Select>
-    //   ]
-    // ]).get(cell.type.language || "中文");
     return (
       <Switch
         checked={new Map([["是", true], ["否", false]]).get(value)}
