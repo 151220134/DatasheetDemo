@@ -65,8 +65,6 @@
     "react-datepicker": "^2.9.6",
     "react-document-title": "^2.0.3",
     "react-dom": "^16.8.6",
-    "react-jsonschema-form": "^1.8.0",
-    "react-jsonschema-form-lab": "^0.0.1",
     "react-select": "^3.0.8",
     "redux": "^4.0.1",
     "umi": "^2.9.6",
