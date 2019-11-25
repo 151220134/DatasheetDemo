@@ -126,7 +126,7 @@ export default {
               path: "/welcome",
               name: "welcome",
               icon: "smile",
-              component: "./"
+              component: "./FixedHead"
             },
             {
               component: "./404"
